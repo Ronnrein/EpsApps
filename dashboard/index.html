@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Work+Sans" />
+        <link rel="stylesheet" type="text/css" href="../misc/styles.css" />
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <title>Emergency Positioning System</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <header></header>
+        <div id="body">
+            <div id="sessions" class="column"></div>
+            <div id="chat" class="column">
+                <div id="chat-header">
+                    <h1></h1>
+                    <p></p>
+                </div>
+                <div id="chat-content"></div>
+                <div id="chat-footer">
+                    <textarea id="chat-message"></textarea>
+                    <button id="chat-button">Send</button>
+                </div>
+            </div>
+            <div id="map" class="column"></div>
+        </div>
+        <div id="pin-dialog">
+          <textarea id="pin-message" cols="13"></textarea><br />
+          <button id="pin-dialog-cancel">Cancel</button>
+          <button id="pin-dialog-post">Post</button>
+        </div>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript" src="../misc/functions.js"></script>
+        <script type="text/javascript" src="script.js"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD48lnBQNY5C-6sJNzm5TtJhxYyuJWTgiU&callback=initMap"></script>
+    </body>
+</html>

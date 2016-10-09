@@ -1,0 +1,28 @@
+* {
+    font-family: 'Work Sans', sans-serif;
+}
+
+#pin-dialog{
+    border: 1px solid;
+    position:absolute;
+    top: 50px;
+    left: 50px;
+    padding:10px;
+    border-radius:10px;
+    background-color: white;
+    display:none;
+}
+
+.message{
+    border: 2px solid;
+    border-radius: 10px;
+    padding:5px;
+    clear: both;
+}
+
+.message-client{
+    float: left;
+}
+.message-operator{
+    float: right;
+}

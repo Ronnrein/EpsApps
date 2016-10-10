@@ -4,6 +4,7 @@
 
 var url = "http://eps.ronnrein.com:8888";
 var emergencies = ["Crime", "Fire", "Health"];
+var mapZoom = 15;
 
 // Variables
 
@@ -100,7 +101,7 @@ function getSession(id){
         var newPos = new google.maps.LatLng(data.Latitude, data.Longitude);
         google.maps.event.trigger(map, 'resize');
         map.setCenter(newPos);
-        map.setZoom(15);
+        map.setZoom(mapZoom);
         $("#chat-header > h1").html("Session "+data.ID);
         getFormattedAddress(geoCoder, newPos.lat(), newPos.lng(), function(address){
             $("#chat-header > p").html(address);

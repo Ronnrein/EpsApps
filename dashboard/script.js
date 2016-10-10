@@ -1,6 +1,7 @@
 // Options
 
 var loopInterval = 10000;
+var animateSpeed = 350;
 
 // Init
 
@@ -38,8 +39,8 @@ function refreshSessions(){
 $("#sessions").on("click", "div", function(){
     var id = $(this).attr("id").replace("session", "");
     if(currentSession === undefined){
-        $("#chat").animate({width: "35%"}, 350);
-        $("#map").animate({width: "50%"}, 350, function(){
+        $("#chat").animate({width: "35%"}, animateSpeed);
+        $("#map").animate({width: "50%"}, animateSpeed, function(){
             getSession(id);
         });
     }

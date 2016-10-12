@@ -1,49 +1,59 @@
-// Options
+// Functions for mobile app
 
-var loopInterval = 1000;
-var geoMaximumAge = 3000;
-var geoTimeout = 15000;
-var telephone = "+4797003306";
+function init() {
+    new MobileApp();
+}
 
-// Variables
+function MobileApp() {
 
-var currentPos;
+    this.emergencyButtonEl = ".emergency-button";
+    this.homePageEl = "";
+    this.chatEl = "";
+    this.geoMaximumAge = 3000;
+    this.geoTimeout = 15000;
+    this.telephone = "+4797003306";
 
-// Init
+    var app = new SharedApp();
+    var self = this;
 
-$(document).ready(function() {
-    currentPos = map.getCenter();
-    if(navigator.geolocation) {
-        setBrowserPosition();
-        navigator.geolocation.watchPosition(function(pos){
-            userLocationChange(new google.maps.LatLng(newPos.coords.latitude, newPos.coords.longitude));
-            setTextPosition(pos);
-        }, function(error){
-            console.log("Wath position error: "+error);
-        }, {enableHighAccuracy: true, maximumAge: geoMaximumAge, timeout: geoTimeout});
+    bindEvents();
+    loadGpsPosition();
+
+    function emergencyButtonClick() {
+        var id = parseInt($(this).attr("id").slice(-1));
+        API.Sessions.addSession(app.map.getUserPosition(), id, function(data){
+            SharedApp.loadSession(data.ID);
+            $(self.homePageEl).hide();
+            $(self.chatEl).show();
+        });
     }
-});
 
-// Loop
+    function gpsPositionChanged(geoPos) {
+        var pos = new google.maps.LatLng(geoPos.coords.latitude, geoPos.coords.longitude);
+        app.map.setUserMarkerPosition(pos);
+        if(SharedApp.session !== undefined) {
+            var data = {latitude: pos.lat(), longitude: pos.lng()};
+            API.Sessions.updateSession(SharedApp.session, data);
+        }
+    }
 
-// Functions
+    function loadGpsPosition() {
+        $.mobile.loading("show", {text: "Loading GPS", textVisible: true});
+        navigator.geolocation.getCurrentPosition(function(geoPos){
+            var pos = new google.maps.LatLng(geoPos.coords.latitude, geoPos.coords.longitude)
+            app.map.setCenter(pos);
+            gpsPositionChanged(geoPos);
+            $.mobile.loading("hide");
+        })
+    }
 
-function setBrowserPosition() {
-    getAppLocation(function(pos){
-        map.setCenter(pos);
-        currentPos = pos;
-        userMarker = addMapMarker(map, pos, "red-circle", "You");
-        map.setZoom(mapZoom);
-        setTextPosition(pos);
-    });
+    function bindEvents() {
+        $(self.emergencyButtonEl).click(emergencyButtonClick);
+        navigator.geolocation.watchPosition(gpsPositionChanged, null, {
+            enableHighAccuracy: true,
+            maximumAge: self.geoMaximumAge,
+            timeout: self.geoTimeout
+        });
+    }
+
 }
-
-function setTextPosition(pos) {
-    $("#textButton").attr("href", "sms:"+telephone+"?body=Need help%0D%0ALat: "+pos.lat()+"%0D%0ALng: "+pos.lng()+"%0D%0A%0D%0A");
-}
-
-// Events
-
-$("#callButton").click(function(){
-
-});

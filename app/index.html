@@ -11,22 +11,22 @@
     </head>
     <body>
         <div data-role="page" id="page1">
-            <div data-role="header" id="page1header">
+            <div data-role="header" id="page1header" class="pageheader">
                 <h1>EPS</h1>
             </div>
-            <div data-role="content" id="page1content">
+            <div data-role="content" id="page1content" class="pagecontent">
                 <div id="map"></div>
             </div>
-            <div id="page1options">
+            <div id="page1options" class="pagefooter">
                 <div class="ui-grid-b">
                     <div class="ui-block-a">
-                        <button class="ui-btn ui-btn-a icon-button police-icon-big"></button>
+                        <button class="ui-btn ui-btn-a icon-button police-icon-big emergency-button" id="emergency1"></button>
                     </div>
                     <div class="ui-block-b">
-                        <button class="ui-btn ui-btn-a icon-button fire-icon-big"></button>
+                        <button class="ui-btn ui-btn-a icon-button fire-icon-big emergency-button" id="emergency2"></button>
                     </div>
                     <div class="ui-block-c">
-                        <button class="ui-btn ui-btn-a icon-button health-icon-big"></button>
+                        <button class="ui-btn ui-btn-a icon-button health-icon-big emergency-button" id="emergency3"></button>
                     </div>
                 </div>
                 <div class="ui-grid-a">
@@ -40,15 +40,22 @@
             </div>
         </div>
         <div data-role="page" id="page2">
-            <div data-role="header" id="chat-header">
+            <div data-role="header" id="chat-header" class="pageheader">
                 <h1></h1>
                 <p></p>
             </div>
-            <div data-role="content" id="page2content">
+            <div data-role="content" id="page2content" class="pagecontent">
+
+            </div>
+            <div id="chat" class="pagefooter">
                 <div id="chat-content"></div>
                 <div id="chat-footer">
-                    <textarea id="chat-message"></textarea>
-                    <button id="chat-button">Send</button>
+                    <div class="ui-block-a" id="message-container">
+                        <textarea id="chat-message"></textarea>
+                    </div>
+                    <div class="ui-block-b" id="message-button-container">
+                        <button id="chat-button">Send</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -57,10 +64,11 @@
             <button id="pin-dialog-cancel">Cancel</button>
             <button id="pin-dialog-post">Post</button>
         </div>
+        <div class='ui-loader-background'></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
         <script type="text/javascript" src="../misc/functions.js"></script>
         <script type="text/javascript" src="script.js"></script>
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD48lnBQNY5C-6sJNzm5TtJhxYyuJWTgiU&callback=initMap"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD48lnBQNY5C-6sJNzm5TtJhxYyuJWTgiU&callback=init"></script>
     </body>
 </html>

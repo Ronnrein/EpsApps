@@ -1,53 +1,64 @@
-// Options
+// Functions for dashboard
 
-var loopInterval = 10000;
-var animateSpeed = 350;
-
-// Init
-
-$(document).ready(function(){
-    refreshSessions();
-    //TODO: OperatorId Login
-    //setInterval(loop, loopInterval);
-});
-
-// Loop
-
-function loop(){
-    if(currentSession != 0){
-        getMapPins(map, currentSession);
-        getChat(currentSession);
-    }
+function init() {
+    new DashboardApp();
 }
 
-// Functions
+function DashboardApp() {
 
-function refreshSessions(){
-    $.getJSON(url+"/sessions", function(data){
-        $.each(data, function(i, item){
-            getFormattedAddress(geoCoder, item.Latitude, item.Longitude, function(address){
+    this.sessionEl = "#sessions";
+    this.chatEl = "#chat";
+    this.mapEl = "#map";
+    this.animateSpeed = 350;
+
+    var app = new SharedApp();
+    var self = this;
+
+    bindEvents();
+    refreshSessions();
+
+    function refreshSessions() {
+        API.Sessions.getSessions(function(data){
+            $(self.sessionEl).html("");
+            $.each(data, function(i, item){
                 var image = "../misc/icons/departments/"+item.DepartmentID+".png";
-                var html = "<div id='session"+item.ID+"'><div class='icon status-icon-online'></div><div class='icon' style='background-image:url("+image+");'></div><p>Session "+item.ID+"</p><p class='address'>"+address+"</p></div>";
-                $("#sessions").append(html);
+                var tempId = "address"+item.ID;
+                var pos = new google.maps.LatLng(data.Latitude, data.Longitude);
+                var html = "" +
+                    "<div id='session"+item.ID+"'>" +
+                        "<div class='icon status-icon-online'></div>" +
+                        "<div class='icon' style='background-image:url("+image+");'></div>" +
+                        "<p>Session "+item.ID+"</p>" +
+                        "<p class='address' id='tempId'></p>" +
+                    "</div>";
+                $(self.sessionEl).append(html);
+                app.map.getFormattedAddress(pos, function(address){
+                    $("#"+tempId).html(address);
+                });
             });
         });
-    });
+    }
+
+    function tick() {
+        refreshSessions();
+    }
+
+    function sessionClick() {
+        var id = parseInt($(this).attr("id").replace("session", ""));
+        if(app.session === undefined){
+            $(self.chatEl).animate({width: "35%"}, self.animateSpeed);
+            $(self.mapEl).animate({width: "50%"}, self.animateSpeed, function(){
+                app.loadSession(id);
+            });
+        }
+        else{
+            app.loadSession(id);
+        }
+    }
+
+    function bindEvents() {
+        this.addEventListener("appTick", tick);
+        $(self.sessionEl).on("click", "div", sessionClick);
+    }
+
 }
-
-// Events
-
-$("#sessions").on("click", "div", function(){
-    var id = $(this).attr("id").replace("session", "");
-    if(currentSession === undefined){
-        $("#chat").animate({width: "35%"}, animateSpeed);
-        $("#map").animate({width: "50%"}, animateSpeed, function(){
-            getSession(id);
-        });
-    }
-    else{
-        getSession(id);
-    }
-    currentSession = parseInt(id);
-});
-
-

@@ -13,6 +13,32 @@ function DashboardApp() {
 
     var app = new SharedApp();
     var self = this;
+    var mapPinDialog = $("#mappin-form").dialog({
+        autoOpen: false,
+        height: 300,
+        width: 350,
+        modal: true,
+        buttons: {
+            "Add pin": addPinClick,
+            Cancel: function() {
+                mapPinDialog.dialog("close");
+            }
+        },
+        close: function() {
+            $("#mappin-message").val("");
+        }
+    });
+    var loginDialog = $("#login-form").dialog({
+        autoOpen: true,
+        height: 350,
+        width: 450,
+        modal: true,
+        closeOnEscape: false,
+        dialogClass: "no-close",
+        buttons: {
+            "Login": loginClick
+        }
+    });
 
     bindEvents();
     refreshSessions();
@@ -56,9 +82,36 @@ function DashboardApp() {
         }
     }
 
+    function mapClick(data) {
+        mapPinDialog.dialog("open");
+    }
+
+    function addPinClick() {
+        API.MapPins.addMapPin(app.map.lastClickPosition, $("#mappin-message").val(), app.session);
+        mapPinDialog.dialog("close");
+        app.map.applySessionMapPins(app.session);
+    }
+
+    function loginClick() {
+        if($("#login-username").val() != "" && $("#login-password").val() != "") {
+            API.Operators.logInOperator($("#login-username").val(), $("#login-password").val(), function(data){
+                app.operator = data.ID;
+                loginDialog.dialog("close");
+            }, function(data){
+                var msg = $("#login-message");
+                msg.html("Wrong login information");
+                msg.css({"color": "red"});
+            });
+        }
+        else {
+            $("#login-message").html("Please fill both textboxes");
+        }
+    }
+
     function bindEvents() {
         this.addEventListener("appTick", tick);
         $(self.sessionEl).on("click", "div", sessionClick);
+        app.map.clickFunction = mapClick;
     }
 
 }

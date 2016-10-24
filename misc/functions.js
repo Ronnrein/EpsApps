@@ -44,7 +44,7 @@ function SharedApp() {
         if(self.session !== undefined) {
             var message = $(self.chatMessageEl);
             if(message.val() != "") {
-                API.Messages.addMessage(message, self.operator, self.session);
+                API.Messages.addMessage(message.val(), self.operator, self.session);
             }
             message.val("");
             refreshChat();
@@ -91,6 +91,7 @@ function Map(elementid) {
     this.mapZoom = 15;
     this.markerIconUrl = "http://maps.google.com/mapfiles/kml/paddle/";
     this.clickFunction = function(){};
+    this.lastClickPosition = new google.maps.LatLng(0, 0);
 
     var markers = [];
     var userMarker;
@@ -99,13 +100,12 @@ function Map(elementid) {
     var geoCoder = new google.maps.Geocoder();
     var self = this;
 
-    google.maps.event.addListener(map, "click", function(data) {
-        if(typeof self.clickFunction === "function") {
-            self.clickFunction(data);
-        }
-    });
+    bindEvents();
 
     this.applySessionMapPins = function(id) {
+        if(isInfoWindowOpen()){
+            return;
+        }
         API.Sessions.getSessionMapPins(id, function(data) {
             clearMapMarkers();
             $.each(data, function(i, item) {
@@ -117,7 +117,7 @@ function Map(elementid) {
 
     this.setUserMarkerPosition = function(pos) {
         if(userMarker === undefined) {
-            userMarker = addMapMarker(pos, "red-circle", "User");
+            userMarker = addMapMarker(pos, "red-circle", "User", false);
         }
         else {
             userMarker.setPosition(pos);
@@ -148,7 +148,7 @@ function Map(elementid) {
         return userMarker.getPosition();
     };
 
-    function addMapMarker(pos, icon, text) {
+    function addMapMarker(pos, icon, text, addToList) {
         var marker = new google.maps.Marker({
             position: pos,
             icon: self.markerIconUrl+icon+".png",
@@ -160,7 +160,10 @@ function Map(elementid) {
             infoWindow.setContent(marker.title);
             infoWindow.open(map, marker);
         });
-        markers.push(marker);
+        if(typeof addToList !== "boolean" || addToList) {
+            markers.push(marker);
+        }
+        return marker;
     }
 
     function clearMapMarkers() {
@@ -169,11 +172,25 @@ function Map(elementid) {
         });
     }
 
+    function isInfoWindowOpen() {
+        var m = infoWindow.getMap();
+        return (m !== null && typeof m !== "undefined");
+    }
+
+    function mapClick(data) {
+        self.lastClickPosition = data.latLng;
+        self.clickFunction(data);
+    }
+
+    function bindEvents() {
+        google.maps.event.addListener(map, "click", mapClick);
+    }
+
 }
 
 var API = {
     url: "http://eps.ronnrein.com:8888",
-    request: function(path, method, data, callback) {
+    request: function(path, method, data, callback, errorCallback) {
         $.ajax({
             url: this.url+"/"+path,
             data: JSON.stringify(data),
@@ -183,136 +200,144 @@ var API = {
                 if (typeof callback === "function") {
                     callback(data);
                 }
+            },
+            error: function(data){
+                if (typeof errorCallback === "function") {
+                    errorCallback(data);
+                }
             }
         });
     },
     Departments: {
         path: "departments",
-        getDepartments: function(callback) {
-            API.request(this.path, "GET", null, callback);
+        getDepartments: function(callback, errorCallback) {
+            API.request(this.path, "GET", null, callback, errorCallback);
         },
-        getDepartment: function(id, callback) {
-            API.request(this.path+"/"+id, "GET", null, callback);
+        getDepartment: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "GET", null, callback, errorCallback);
         },
-        addDepartment: function(name, callback) {
-            API.request(this.path, "POST", {name: name}, callback);
+        addDepartment: function(name, callback, errorCallback) {
+            API.request(this.path, "POST", {name: name}, callback, errorCallback);
         },
-        deleteDepartment: function(id, callback) {
-            API.request(this.path+"/"+id, "DELETE", null, callback);
+        deleteDepartment: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "DELETE", null, callback, errorCallback);
         },
-        updateDepartment: function(id, data, callback) {
-            API.request(this.path+"/"+id, "POST", data, callback);
+        updateDepartment: function(id, data, callback, errorCallback) {
+            API.request(this.path+"/"+id, "POST", data, callback, errorCallback);
         },
-        getDepartmentSessions: function(id, callback) {
-            API.request(this.path+"/"+id+"/sessions", "GET", null, callback);
+        getDepartmentSessions: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id+"/sessions", "GET", null, callback, errorCallback);
         },
-        getDepartmentOperators: function(id, callback) {
-            API.request(this.path+"/"+id+"/operators", "GET", null, callback);
+        getDepartmentOperators: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id+"/operators", "GET", null, callback, errorCallback);
         }
     },
     MapPins: {
         path: "mappins",
-        getMapPins: function(callback) {
-            API.request(this.path, "GET", null, callback);
+        getMapPins: function(callback, errorCallback) {
+            API.request(this.path, "GET", null, callback, errorCallback);
         },
-        getMapPin: function(id, callback) {
-            API.request(this.path+"/"+id, "GET", null, callback);
+        getMapPin: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "GET", null, callback, errorCallback);
         },
-        addMapPin: function(position, text, session, callback) {
+        addMapPin: function(position, text, session, callback, errorCallback) {
             API.request(this.path, "POST",{
                 latitude: position.lat().toFixed(6),
                 longitude: position.lng().toFixed(6),
                 text: text,
                 sessionid: session
-            }, callback);
+            }, callback, errorCallback);
         },
-        deleteMapPin: function(id, callback) {
-            API.request(this.path+"/"+id, "DELETE", null, callback);
+        deleteMapPin: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "DELETE", null, callback, errorCallback);
         },
-        updateMapPin: function(id, data, callback) {
-            API.request(this.path+"/"+id, "POST", data, callback);
+        updateMapPin: function(id, data, callback, errorCallback) {
+            API.request(this.path+"/"+id, "POST", data, callback, errorCallback);
         }
     },
     Messages: {
         path: "messages",
-        getMessages: function(callback) {
-            API.request(this.path, "GET", null, callback);
+        getMessages: function(callback, errorCallback) {
+            API.request(this.path, "GET", null, callback, errorCallback);
         },
-        getMessage: function(id, callback) {
-            API.request(this.path+"/"+id, "GET", null, callback);
+        getMessage: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "GET", null, callback, errorCallback);
         },
-        addMessage: function(message, operator, session, callback) {
+        addMessage: function(message, operator, session, callback, errorCallback) {
             API.request(this.path, "POST",{
                 message: message,
                 operatorid: operator,
                 sessionid: session
-            }, callback);
+            }, callback, errorCallback);
         },
-        deleteMessage: function(id, callback) {
-            API.request(this.path+"/"+id, "DELETE", null, callback);
+        deleteMessage: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "DELETE", null, callback, errorCallback);
         },
-        updateMessage: function(id, data, callback) {
-            API.request(this.path+"/"+id, "POST", data, callback);
+        updateMessage: function(id, data, callback, errorCallback) {
+            API.request(this.path+"/"+id, "POST", data, callback, errorCallback);
         }
     },
     Operators: {
         path: "operators",
-        getOperators: function(callback) {
-            API.request(this.path, "GET", null, callback);
+        getOperators: function(callback, errorCallback) {
+            API.request(this.path, "GET", null, callback, errorCallback);
         },
-        getOperator: function(id, callback) {
-            API.request(this.path+"/"+id, "GET", null, callback);
+        getOperator: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "GET", null, callback, errorCallback);
         },
-        addOperator: function(name, username, password, department, callback) {
+        addOperator: function(name, username, password, department, callback, errorCallback) {
             API.request(this.path, "POST",{
                 name: name,
                 username: username,
                 password: password,
                 departmentid: department
-            }, callback);
+            }, callback, errorCallback);
         },
-        deleteOperator: function(id, callback) {
-            API.request(this.path+"/"+id, "DELETE", null, callback);
+        deleteOperator: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "DELETE", null, callback, errorCallback);
         },
-        updateOperator: function(id, data, callback) {
-            API.request(this.path+"/"+id, "POST", data, callback);
+        updateOperator: function(id, data, callback, errorCallback) {
+            API.request(this.path+"/"+id, "POST", data, callback, errorCallback);
         },
-        getOperatorMessages: function(id, callback) {
-            API.request(this.path+"/"+id+"/messages", "GET", null, callback);
+        getOperatorMessages: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id+"/messages", "GET", null, callback, errorCallback);
         },
-        getOperatorSessions: function(id, callback) {
-            API.request(this.path+"/"+id+"/sessions", "GET", null, callback);
+        getOperatorSessions: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id+"/sessions", "GET", null, callback, errorCallback);
+        },
+        logInOperator: function(username, password, callback, errorCallback) {
+            API.request(this.path+"/login", "POST", {username: username, password: password}, callback, errorCallback)
         }
     },
     Sessions: {
         path: "sessions",
-        getSessions: function(callback) {
-            API.request(this.path, "GET", null, callback);
+        getSessions: function(callback, errorCallback) {
+            API.request(this.path, "GET", null, callback, errorCallback);
         },
-        getSession: function(id, callback) {
-            API.request(this.path+"/"+id, "GET", null, callback);
+        getSession: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "GET", null, callback, errorCallback);
         },
-        addSession: function(position, department, callback) {
+        addSession: function(position, department, callback, errorCallback) {
             API.request(this.path, "POST",{
                 latitude: position.lat().toFixed(6),
                 longitude: position.lng().toFixed(6),
                 departmentid: department
-            }, callback);
+            }, callback, errorCallback);
         },
-        deleteSession: function(id, callback) {
-            API.request(this.path+"/"+id, "DELETE", null, callback);
+        deleteSession: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id, "DELETE", null, callback, errorCallback);
         },
-        updateSession: function(id, data, callback) {
-            API.request(this.path+"/"+id, "POST", data, callback);
+        updateSession: function(id, data, callback, errorCallback) {
+            API.request(this.path+"/"+id, "POST", data, callback, errorCallback);
         },
-        getSessionMapPins: function(id, callback) {
-            API.request(this.path+"/"+id+"/mappins", "GET", null, callback);
+        getSessionMapPins: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id+"/mappins", "GET", null, callback, errorCallback);
         },
-        getSessionMessages: function(id, callback) {
-            API.request(this.path+"/"+id+"/messages", "GET", null, callback);
+        getSessionMessages: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id+"/messages", "GET", null, callback, errorCallback);
         },
-        getSessionOperators: function(id, callback) {
-            API.request(this.path+"/"+id+"/operators", "GET", null, callback);
+        getSessionOperators: function(id, callback, errorCallback) {
+            API.request(this.path+"/"+id+"/operators", "GET", null, callback, errorCallback);
         }
     }
 };

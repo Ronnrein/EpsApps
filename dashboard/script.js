@@ -44,25 +44,37 @@ function DashboardApp() {
     refreshSessions();
 
     function refreshSessions() {
-        API.Sessions.getSessions(function(data){
-            $(self.sessionEl).html("");
-            $.each(data, function(i, item){
-                var image = "../misc/icons/departments/"+item.DepartmentID+".png";
-                var tempId = "address"+item.ID;
-                var pos = new google.maps.LatLng(data.Latitude, data.Longitude);
-                var html = "" +
-                    "<div id='session"+item.ID+"'>" +
-                        "<div class='icon status-icon-online'></div>" +
-                        "<div class='icon' style='background-image:url("+image+");'></div>" +
-                        "<p>Session "+item.ID+"</p>" +
-                        "<p class='address' id='tempId'></p>" +
-                    "</div>";
-                $(self.sessionEl).append(html);
-                app.map.getFormattedAddress(pos, function(address){
-                    $("#"+tempId).html(address);
-                });
+        if($("#search-box").val() == ""){
+            API.Sessions.getSessions(function(data){
+                applySessions(data);
             });
+        }
+    }
+
+    function applySessions(sessions) {
+        $(self.sessionEl).html("");
+        $.each(sessions, function(i, item){
+            var image = "../misc/icons/departments/"+item.DepartmentID+".png";
+            var html = "" +
+                "<div id='session"+item.ID+"'>" +
+                "<div class='icon status-icon-online'></div>" +
+                "<div class='icon' style='background-image:url("+image+");'></div>" +
+                "<p>Session "+item.ID+"</p>" +
+                "</div>";
+            $(self.sessionEl).append(html);
         });
+    }
+
+    function searchBoxChange() {
+        var search = $(this).val();
+        if(search != "") {
+            API.Sessions.getSearchSessions(search, function(data){
+                applySessions(data);
+            });
+        }
+        else{
+            refreshSessions();
+        }
     }
 
     function tick() {
@@ -96,21 +108,25 @@ function DashboardApp() {
         if($("#login-username").val() != "" && $("#login-password").val() != "") {
             API.Operators.logInOperator($("#login-username").val(), $("#login-password").val(), function(data){
                 app.operator = data.ID;
+                $("#operator-info h3").html("Logged in as: "+data.Name);
                 loginDialog.dialog("close");
-            }, function(data){
+            }, function(){
                 var msg = $("#login-message");
                 msg.html("Wrong login information");
                 msg.css({"color": "red"});
             });
         }
         else {
-            $("#login-message").html("Please fill both textboxes");
+            var msg = $("#login-message");
+            msg.html("Please fill both fields");
+            msg.css({"color": "red"});
         }
     }
 
     function bindEvents() {
         this.addEventListener("appTick", tick);
         $(self.sessionEl).on("click", "div", sessionClick);
+        $("#search-box").on("keyup change", searchBoxChange);
         app.map.clickFunction = mapClick;
     }
 

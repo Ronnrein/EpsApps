@@ -24,6 +24,7 @@ header{
     width:100%;
     flex: 0 1 100px;
     background-image: url("images/headerBg.jpg");
+    position: relative;
 }
 
 p{
@@ -90,6 +91,7 @@ p{
     padding: 15px;
     width: 100%;
     position: absolute;
+    overflow-y: scroll;
     top: 90px;
     bottom:100px;
     border-top: 1px solid #666666;
@@ -101,7 +103,7 @@ p{
     height: 16px;
     float: right;
     margin-left: 10px;
-    margin-top: 8px;
+    margin-top: 4px;
 }
 
 .address{
@@ -123,6 +125,32 @@ p{
 
 .status-icon-alert{
     background-image: url("../misc/icons/alert.png");
+}
+
+.department-icon-police{
+    background-image: url("../misc/icons/departments/1.png");
+}
+
+.department-icon-fire{
+    background-image: url("../misc/icons/departments/2.png");
+}
+
+.department-icon-health{
+    background-image: url("../misc/icons/departments/3.png");
+}
+
+#search-box{
+    width:200px;
+    position:absolute;
+    bottom: 5px;
+    left: 5px;
+}
+
+#operator-info{
+    color: white;
+    position: absolute;
+    bottom: 10px;
+    right: 5px;
 }
 
 label, input { display:block; }

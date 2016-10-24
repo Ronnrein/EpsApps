@@ -8,7 +8,12 @@
         <meta charset="UTF-8">
     </head>
     <body>
-        <header></header>
+        <header>
+            <div id="operator-info">
+                <h3></h3>
+            </div>
+            <input type="text" name="search-box" id="search-box" class="text ui-widget-content ui-corner-all" />
+        </header>
         <div id="body">
             <div id="sessions" class="column"></div>
             <div id="chat" class="column">
@@ -18,8 +23,8 @@
                 </div>
                 <div id="chat-content"></div>
                 <div id="chat-footer">
-                    <textarea id="chat-message"></textarea>
-                    <button id="chat-button">Send</button>
+                    <textarea id="chat-message" class="text ui-widget-content ui-corner-all"></textarea>
+                    <button id="chat-button" class="ui-button ui-corner-all ui-widget">Send</button>
                 </div>
             </div>
             <div id="map" class="column"></div>

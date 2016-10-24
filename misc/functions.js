@@ -68,7 +68,7 @@ function SharedApp() {
                     var content = $(self.chatContentEl);
                     content.append(html);
                     if(!chatScrolled) {
-                        content.scrollTop = content.scrollHeight;
+                        content.scrollTop(content[0].scrollHeight);
                     }
                 });
             });
@@ -76,7 +76,8 @@ function SharedApp() {
     }
 
     function chatScroll() {
-        chatScrolled = self.scrollTop != self.scrollHeight;
+        chatScrolled = $(this).scrollTop() + $(this).innerHeight() < $(this)[0].scrollHeight;
+        console.log("SCROLL FIRED: "+chatScrolled);
     }
 
     function bindEvents() {
@@ -338,6 +339,9 @@ var API = {
         },
         getSessionOperators: function(id, callback, errorCallback) {
             API.request(this.path+"/"+id+"/operators", "GET", null, callback, errorCallback);
+        },
+        getSearchSessions: function(search, callback, errorCallback) {
+            API.request(this.path+"/search/"+search, "GET", null, callback, errorCallback);
         }
     }
 };

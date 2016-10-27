@@ -7,8 +7,8 @@ function init() {
 function MobileApp() {
 
     this.emergencyButtonEl = ".emergency-button";
-    this.homePageEl = "";
-    this.chatEl = "";
+    this.homePageEl = "#homepagecontent";
+    this.chatEl = "#chatpagecontent";
     this.geoMaximumAge = 3000;
     this.geoTimeout = 15000;
     this.telephone = "+4797003306";
@@ -22,7 +22,9 @@ function MobileApp() {
     function emergencyButtonClick() {
         var id = parseInt($(this).attr("id").slice(-1));
         API.Sessions.addSession(app.map.getUserPosition(), id, function(data){
-            SharedApp.loadSession(data.ID);
+            app.loadSession(data.ID);
+            $("#page1content").css("bottom", "260px");
+            $(".pagefooter").css("height", "260px");
             $(self.homePageEl).hide();
             $(self.chatEl).show();
         });

@@ -10,7 +10,7 @@
         <title>Emergency Positioning System</title>
     </head>
     <body>
-        <div data-role="page" id="page1">
+        <div data-role="page" id="page">
             <div data-role="header" id="page1header" class="pageheader">
                 <h1>EPS</h1>
             </div>
@@ -18,51 +18,39 @@
                 <div id="map"></div>
             </div>
             <div id="page1options" class="pagefooter">
-                <div class="ui-grid-b">
-                    <div class="ui-block-a">
-                        <button class="ui-btn ui-btn-a icon-button police-icon-big emergency-button" id="emergency1"></button>
+                <div id="homepagecontent">
+                    <div class="ui-grid-b">
+                        <div class="ui-block-a">
+                            <button class="ui-btn ui-btn-a icon-button police-icon-big emergency-button" id="emergency1"></button>
+                        </div>
+                        <div class="ui-block-b">
+                            <button class="ui-btn ui-btn-a icon-button fire-icon-big emergency-button" id="emergency2"></button>
+                        </div>
+                        <div class="ui-block-c">
+                            <button class="ui-btn ui-btn-a icon-button health-icon-big emergency-button" id="emergency3"></button>
+                        </div>
                     </div>
-                    <div class="ui-block-b">
-                        <button class="ui-btn ui-btn-a icon-button fire-icon-big emergency-button" id="emergency2"></button>
-                    </div>
-                    <div class="ui-block-c">
-                        <button class="ui-btn ui-btn-a icon-button health-icon-big emergency-button" id="emergency3"></button>
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a href="tel:+97003306" class="ui-btn ui-btn-a">Call 911</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <a id="textButton" href="sms:+4797003306?body=Need help" class="ui-btn ui-btn-a">Send SMS</a>
+                        </div>
                     </div>
                 </div>
-                <div class="ui-grid-a">
-                    <div class="ui-block-a">
-                        <a href="tel:+97003306" class="ui-btn ui-btn-a">Call 911</a>
-                    </div>
-                    <div class="ui-block-b">
-                        <a id="textButton" href="sms:+4797003306?body=Need help" class="ui-btn ui-btn-a">Send SMS</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div data-role="page" id="page2">
-            <div data-role="header" id="chat-header" class="pageheader">
-                <h1></h1>
-                <p></p>
-            </div>
-            <div data-role="content" id="page2content" class="pagecontent">
-
-            </div>
-            <div id="chat" class="pagefooter">
-                <div id="chat-content"></div>
-                <div id="chat-footer">
-                    <div class="ui-block-a" id="message-container">
-                        <textarea id="chat-message"></textarea>
-                    </div>
-                    <div class="ui-block-b" id="message-button-container">
-                        <button id="chat-button">Send</button>
+                <div id="chatpagecontent">
+                    <div id="chat-content"></div>
+                    <div id="chat-footer">
+                        <div class="ui-block-a" id="message-container">
+                            <textarea id="chat-message"></textarea>
+                        </div>
+                        <div class="ui-block-b" id="message-button-container">
+                            <button id="chat-button">Send</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="pin-dialog">
-            <textarea id="pin-message" cols="13"></textarea><br />
-            <button id="pin-dialog-cancel">Cancel</button>
-            <button id="pin-dialog-post">Post</button>
         </div>
         <div class='ui-loader-background'></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>

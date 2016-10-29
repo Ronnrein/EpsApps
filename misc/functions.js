@@ -13,11 +13,13 @@ function SharedApp() {
     this.session = undefined;
     this.operator = 0;
     this.map = new Map(this.mapEl);
+    this.timeDiff = 0;
 
     var chatScrolled = false;
     var loopEvent = new Event("appTick");
     var self = this;
 
+    init();
     bindEvents();
     setInterval(tick, this.loopTime);
 
@@ -34,6 +36,14 @@ function SharedApp() {
             self.map.setUserMarkerPosition(pos);
         });
     };
+
+    function init() {
+        API.getServerTime(function(data){
+            var serverTime = new Date(data.Time).getTime()/1000;
+            var browserTime = new Date().getTime()/1000;
+            timeDiff = Math.floor(serverTime - browserTime);
+        });
+    }
 
     function tick() {
         refreshAll();
@@ -209,6 +219,9 @@ var API = {
             }
         });
     },
+    getServerTime: function(callback, errorCallback) {
+        API.request("time", "GET", null, callback, errorCallback);
+    },
     Departments: {
         path: "departments",
         getDepartments: function(callback, errorCallback) {
@@ -248,6 +261,7 @@ var API = {
                 text: text,
                 sessionid: session
             }, callback, errorCallback);
+            API.Sessions.updateSession(session, {"id": session});
         },
         deleteMapPin: function(id, callback, errorCallback) {
             API.request(this.path+"/"+id, "DELETE", null, callback, errorCallback);
@@ -270,6 +284,7 @@ var API = {
                 operatorid: operator,
                 sessionid: session
             }, callback, errorCallback);
+            API.Sessions.updateSession(session, {"id": session});
         },
         deleteMessage: function(id, callback, errorCallback) {
             API.request(this.path+"/"+id, "DELETE", null, callback, errorCallback);

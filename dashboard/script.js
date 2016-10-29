@@ -10,7 +10,10 @@ function DashboardApp() {
     this.chatEl = "#chat";
     this.mapEl = "#map";
     this.animateSpeed = 350;
-
+    this.statusTime = {
+        online: 1800,
+        idle: 3600
+    };
     var app = new SharedApp();
     var self = this;
     var mapPinDialog = $("#mappin-form").dialog({
@@ -55,9 +58,19 @@ function DashboardApp() {
         $(self.sessionEl).html("");
         $.each(sessions, function(i, item){
             var image = "../misc/icons/departments/"+item.DepartmentID+".png";
+            var sessionTime = new Date(item.UpdatedAt).getTime()/1000;
+            var currentTime = (new Date().getTime()/1000)-app.timeDiff;
+            var time = Math.floor(currentTime - sessionTime);
+            var icon = "status-icon-offline";
+            if(time < self.statusTime.online){
+                icon = "status-icon-online";
+            }
+            else if(time < self.statusTime.idle){
+                icon = "status-icon-idle";
+            }
             var html = "" +
                 "<div id='session"+item.ID+"'>" +
-                "<div class='icon status-icon-online'></div>" +
+                "<div class='icon "+icon+"'></div>" +
                 "<div class='icon' style='background-image:url("+image+");'></div>" +
                 "<p>Session "+item.ID+"</p>" +
                 "</div>";

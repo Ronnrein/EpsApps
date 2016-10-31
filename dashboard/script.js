@@ -54,6 +54,15 @@ function DashboardApp() {
         }
     }
 
+    function refreshUserMarker() {
+        if(app.session !== undefined) {
+            API.Sessions.getSession(app.session, function(data){
+                var pos = new google.maps.LatLng(data.Latitude, data.Longitude);
+                app.map.setUserMarkerPosition(pos);
+            });
+        }
+    }
+
     function applySessions(sessions) {
         $(self.sessionEl).html("");
         $.each(sessions, function(i, item){
@@ -92,6 +101,7 @@ function DashboardApp() {
 
     function tick() {
         refreshSessions();
+        refreshUserMarker();
     }
 
     function sessionClick() {

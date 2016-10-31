@@ -15,13 +15,18 @@ function MobileApp() {
 
     var app = new SharedApp();
     var self = this;
+    var newPosition = undefined;
 
     bindEvents();
     loadGpsPosition();
 
+    function tick() {
+        updateUserPosition();
+    }
+
     function emergencyButtonClick() {
         var id = parseInt($(this).attr("id").slice(-1));
-        API.Sessions.addSession(app.map.getUserPosition(), id, function(data){
+        API.Sessions.addSession(app.map.getUserMarkerPosition(), id, function(data){
             app.loadSession(data.ID);
             $("#page1content").css("bottom", "260px");
             $(".pagefooter").css("height", "260px");
@@ -30,28 +35,32 @@ function MobileApp() {
         });
     }
 
-    function gpsPositionChanged(geoPos) {
-        var pos = new google.maps.LatLng(geoPos.coords.latitude, geoPos.coords.longitude);
+    function gpsPositionChanged(pos) {
         app.map.setUserMarkerPosition(pos);
-        if(SharedApp.session !== undefined) {
-            var data = {latitude: pos.lat(), longitude: pos.lng()};
-            API.Sessions.updateSession(SharedApp.session, data);
+        newPosition = pos;
+    }
+
+    function updateUserPosition() {
+        if(newPosition !== undefined && app.session !== undefined) {
+            var data = {latitude: newPosition.lat().toFixed(6), longitude: newPosition.lng().toFixed(6)};
+            API.Sessions.updateSession(app.session, data);
+            newPosition = undefined;
         }
     }
 
     function loadGpsPosition() {
-        $.mobile.loading("show", {text: "Loading GPS", textVisible: true});
-        navigator.geolocation.getCurrentPosition(function(geoPos){
-            var pos = new google.maps.LatLng(geoPos.coords.latitude, geoPos.coords.longitude)
+        app.map.getUserLocation(function(pos){
             app.map.setCenter(pos);
-            gpsPositionChanged(geoPos);
-            $.mobile.loading("hide");
-        })
+            gpsPositionChanged(pos);
+        });
     }
 
     function bindEvents() {
+        this.addEventListener("appTick", tick);
         $(self.emergencyButtonEl).click(emergencyButtonClick);
-        navigator.geolocation.watchPosition(gpsPositionChanged, null, {
+        navigator.geolocation.watchPosition(function(data) {
+            gpsPositionChanged(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
+        }, null, {
             enableHighAccuracy: true,
             maximumAge: self.geoMaximumAge,
             timeout: self.geoTimeout

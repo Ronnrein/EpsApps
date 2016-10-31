@@ -87,7 +87,6 @@ function SharedApp() {
 
     function chatScroll() {
         chatScrolled = $(this).scrollTop() + $(this).innerHeight() < $(this)[0].scrollHeight;
-        console.log("SCROLL FIRED: "+chatScrolled);
     }
 
     function bindEvents() {
@@ -100,7 +99,7 @@ function SharedApp() {
 function Map(elementid) {
 
     this.mapZoom = 15;
-    this.markerIconUrl = "http://maps.google.com/mapfiles/kml/paddle/";
+    this.markerIconUrl = "https://maps.google.com/mapfiles/kml/paddle/";
     this.clickFunction = function(){};
     this.lastClickPosition = new google.maps.LatLng(0, 0);
 
@@ -155,8 +154,46 @@ function Map(elementid) {
         return map.getCenter();
     };
 
-    this.getUserPosition = function() {
+    this.getUserMarkerPosition = function() {
         return userMarker.getPosition();
+    };
+
+    this.getUserLocation = function(callback) {
+        self.getGPSLocation(function(pos) {
+            callback(pos);
+        }, function(){
+            self.getIPLocation(function(pos){
+                callback(pos);
+            }, function(){
+                callback(self.getUserMarkerPosition());
+            });
+        });
+    };
+
+    this.getGPSLocation = function(callback, errorCallback){
+        if(typeof callback === "function") {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (geoPos) {
+                    var pos = new google.maps.LatLng(geoPos.coords.latitude, geoPos.coords.longitude);
+                    callback(pos);
+                }, function () {
+                    errorCallback();
+                });
+            }
+            else {
+                errorCallback();
+            }
+        }
+    };
+
+    this.getIPLocation = function(callback, errorCallback) {
+        if(typeof callback === "function") {
+            $.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyA8MGsXKkjtuO3vTB7AZzQDmaC4w1xH4Ts", function(data){
+                callback(new google.maps.LatLng(data.location.lat, data.location.lng));
+            }).fail(function(){
+                errorCallback();
+            });
+        }
     };
 
     function addMapMarker(pos, icon, text, addToList) {
@@ -200,7 +237,7 @@ function Map(elementid) {
 }
 
 var API = {
-    url: "http://eps.ronnrein.com:8888",
+    url: "https://eps.ronnrein.com:4433",
     request: function(path, method, data, callback, errorCallback) {
         $.ajax({
             url: this.url+"/"+path,

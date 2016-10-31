@@ -117,8 +117,10 @@ function DashboardApp() {
         }
     }
 
-    function mapClick(data) {
-        mapPinDialog.dialog("open");
+    function mapClick() {
+        if(app.session !== undefined) {
+            mapPinDialog.dialog("open");
+        }
     }
 
     function addPinClick() {

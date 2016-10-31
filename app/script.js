@@ -7,8 +7,8 @@ function init() {
 function MobileApp() {
 
     this.emergencyButtonEl = ".emergency-button";
-    this.homePageEl = "#homepagecontent";
-    this.chatEl = "#chatpagecontent";
+    this.homePageEl = "#front-page-content";
+    this.chatEl = "#chat-page-content";
     this.geoMaximumAge = 3000;
     this.geoTimeout = 15000;
     this.telephone = "+4797003306";
@@ -17,8 +17,26 @@ function MobileApp() {
     var self = this;
     var newPosition = undefined;
 
+    $.mobile.changePage.defaults.changeHash = false;
+
     bindEvents();
     loadGpsPosition();
+
+    $("#map").resizable({
+        handleSelector: "#resize-handler",
+        resizeWidth: false,
+        onDrag: function(e, $el, newWidth, newHeight, opt) {
+            var diff = $("#content").height() - newHeight;
+            if(diff < 150) {
+                newHeight = newHeight - (150 - diff);
+            }
+            else if(newHeight < 150) {
+                newHeight = 150;
+            }
+            $el.height(newHeight);
+            return false;
+        }
+    });
 
     function tick() {
         updateUserPosition();
@@ -28,10 +46,16 @@ function MobileApp() {
         var id = parseInt($(this).attr("id").slice(-1));
         API.Sessions.addSession(app.map.getUserMarkerPosition(), id, function(data){
             app.loadSession(data.ID);
-            $("#page1content").css("bottom", "260px");
-            $(".pagefooter").css("height", "260px");
-            $(self.homePageEl).hide();
-            $(self.chatEl).show();
+            var map = $("#map");
+            map.css("height", map.height()+"px");
+            map.css("flex", "0 0 auto");
+            $("#options").css("flex", "1 1 auto");
+            $("#resize-handler").show();
+            $(self.homePageEl).fadeOut(function(){
+                $(self.chatEl).fadeIn(function(){
+                    $(self.chatEl).css("display", "flex");
+                });
+            });
         });
     }
 
@@ -55,9 +79,28 @@ function MobileApp() {
         });
     }
 
+    function mapClick() {
+        if(app.session !== undefined) {
+            $.mobile.changePage("#map-pin-dialog");
+        }
+    }
+
+    function closeDialog() {
+        $.mobile.changePage("#page");
+    }
+
+    function addPinClick() {
+        API.MapPins.addMapPin(app.map.lastClickPosition, $("#mappin-message").val(), app.session);
+        app.map.applySessionMapPins(app.session);
+        closeDialog();
+        $("#mappin-message").val("");
+    }
+
     function bindEvents() {
         this.addEventListener("appTick", tick);
         $(self.emergencyButtonEl).click(emergencyButtonClick);
+        $("#mappin-close-button").click(closeDialog);
+        $("#mappin-add-button").click(addPinClick);
         navigator.geolocation.watchPosition(function(data) {
             gpsPositionChanged(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
         }, null, {
@@ -65,6 +108,7 @@ function MobileApp() {
             maximumAge: self.geoMaximumAge,
             timeout: self.geoTimeout
         });
+        app.map.clickFunction = mapClick;
     }
 
 }

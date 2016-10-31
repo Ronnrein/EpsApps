@@ -10,44 +10,61 @@
         <title>Emergency Positioning System</title>
     </head>
     <body>
-        <div data-role="page" id="page">
-            <div data-role="header" id="page1header" class="pageheader">
+        <div data-role="page" id="home-page">
+            <div data-role="header">
                 <h1>EPS</h1>
             </div>
-            <div data-role="content" id="page1content" class="pagecontent">
+            <div data-role="content" id="content">
                 <div id="map"></div>
-            </div>
-            <div id="page1options" class="pagefooter">
-                <div id="homepagecontent">
-                    <div class="ui-grid-b">
-                        <div class="ui-block-a">
-                            <button class="ui-btn ui-btn-a icon-button police-icon-big emergency-button" id="emergency1"></button>
+                <div id="resize-handler"></div>
+                <div id="options">
+                    <div id="front-page-content">
+                        <div class="ui-grid-b">
+                            <div class="ui-block-a">
+                                <button class="ui-btn ui-btn-a icon-button police-icon-big emergency-button" id="emergency1"></button>
+                            </div>
+                            <div class="ui-block-b">
+                                <button class="ui-btn ui-btn-a icon-button fire-icon-big emergency-button" id="emergency2"></button>
+                            </div>
+                            <div class="ui-block-c">
+                                <button class="ui-btn ui-btn-a icon-button health-icon-big emergency-button" id="emergency3"></button>
+                            </div>
                         </div>
-                        <div class="ui-block-b">
-                            <button class="ui-btn ui-btn-a icon-button fire-icon-big emergency-button" id="emergency2"></button>
-                        </div>
-                        <div class="ui-block-c">
-                            <button class="ui-btn ui-btn-a icon-button health-icon-big emergency-button" id="emergency3"></button>
+                        <div class="ui-grid-a">
+                            <div class="ui-block-a">
+                                <a href="tel:+97003306" class="ui-btn ui-btn-a">Call 911</a>
+                            </div>
+                            <div class="ui-block-b">
+                                <a id="textButton" href="sms:+4797003306?body=Need help" class="ui-btn ui-btn-a">Send SMS</a>
+                            </div>
                         </div>
                     </div>
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a">
-                            <a href="tel:+97003306" class="ui-btn ui-btn-a">Call 911</a>
-                        </div>
-                        <div class="ui-block-b">
-                            <a id="textButton" href="sms:+4797003306?body=Need help" class="ui-btn ui-btn-a">Send SMS</a>
+                    <div id="chat-page-content">
+                        <div id="chat-content"></div>
+                        <div id="chat-footer">
+                            <div class="ui-block-a" id="message-container">
+                                <textarea id="chat-message"></textarea>
+                            </div>
+                            <div class="ui-block-b" id="message-button-container">
+                                <button id="chat-button">Send</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div id="chatpagecontent">
-                    <div id="chat-content"></div>
-                    <div id="chat-footer">
-                        <div class="ui-block-a" id="message-container">
-                            <textarea id="chat-message"></textarea>
-                        </div>
-                        <div class="ui-block-b" id="message-button-container">
-                            <button id="chat-button">Send</button>
-                        </div>
+            </div>
+        </div>
+        <div data-role="page" id="map-pin-dialog" data-dialog="true" data-close-btn="none">
+            <div data-role="header">
+                <h1>Add map pin</h1>
+            </div>
+            <div data-role="main" class="ui-content">
+                <input type="text" id="mappin-message"/>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a href="#" id="mappin-close-button" class="ui-link ui-btn ui-btn-b ui-shadow ui-corner-all" role="button">Close</a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a href="#" id="mappin-add-button" class="ui-link ui-btn ui-btn-b ui-shadow ui-corner-all" role="button">Add</a>
                     </div>
                 </div>
             </div>
@@ -55,6 +72,7 @@
         <div class='ui-loader-background'></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+        <script type="text/javascript" src="jquery-resizable.min.js"></script>
         <script type="text/javascript" src="../misc/functions.js"></script>
         <script type="text/javascript" src="script.js"></script>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8MGsXKkjtuO3vTB7AZzQDmaC4w1xH4Ts&callback=init"></script>

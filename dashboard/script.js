@@ -44,10 +44,9 @@ function DashboardApp() {
     });
 
     bindEvents();
-    refreshSessions();
 
     function refreshSessions() {
-        if($("#search-box").val() == ""){
+        if($("#search-box").val() == "" && app.operator != 0){
             API.Sessions.getSessions(function(data){
                 applySessions(data);
             });
@@ -133,8 +132,13 @@ function DashboardApp() {
         if($("#login-username").val() != "" && $("#login-password").val() != "") {
             API.Operators.logInOperator($("#login-username").val(), $("#login-password").val(), function(data){
                 app.operator = data.ID;
-                $("#operator-info h3").html("Logged in as: "+data.Name);
+                $("#operator-name h3").html(data.Name);
+                var image = "../misc/icons/departments/"+data.DepartmentID+".png";
+                $("#operator-name div").css("background-image", "url("+image+")");
+                $("#operator-status h3").html("Online");
+                $("#operator-status div").removeClass("status-icon-offline").addClass("status-icon-online");
                 loginDialog.dialog("close");
+                refreshSessions();
             }, function(){
                 var msg = $("#login-message");
                 msg.html("Wrong login information");

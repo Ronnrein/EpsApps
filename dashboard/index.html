@@ -10,9 +10,16 @@
     <body>
         <header>
             <div id="operator-info">
-                <h3></h3>
+                <div class="operator-info-box" id="operator-status">
+                    <div class="icon status-icon-offline"></div>
+                    <h3>Offline</h3>
+                </div><br />
+                <div class="operator-info-box" id="operator-name">
+                    <div class="icon"></div>
+                    <h3></h3>
+                </div>
             </div>
-            <input type="text" name="search-box" id="search-box" class="text ui-widget-content ui-corner-all" />
+            <input type="search" name="search-box" id="search-box" class="text ui-widget-content ui-corner-all" placeholder="Search for session..." />
         </header>
         <div id="body">
             <div id="sessions" class="column"></div>

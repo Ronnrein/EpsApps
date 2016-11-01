@@ -22,9 +22,10 @@ body{
 
 header{
     width:100%;
-    flex: 0 1 100px;
+    flex: 0 1 70px;
     background-image: url("images/headerBg.jpg");
     position: relative;
+    border-bottom:5px solid gray;
 }
 
 p{
@@ -142,15 +143,25 @@ p{
 #search-box{
     width:200px;
     position:absolute;
-    bottom: 5px;
-    left: 5px;
+    bottom: 0px;
+    left: 10px;
 }
 
 #operator-info{
     color: white;
     position: absolute;
     bottom: 10px;
-    right: 5px;
+    right: 15px;
+}
+
+.operator-info-box h3{
+    float:right;
+    text-shadow: 2px 2px gray;
+}
+
+.operator-info-box{
+    display: inline-block;
+    float: right;
 }
 
 label, input { display:block; }

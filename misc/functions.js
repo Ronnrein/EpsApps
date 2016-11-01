@@ -160,12 +160,12 @@ function Map(elementid) {
 
     this.getUserLocation = function(callback) {
         self.getGPSLocation(function(pos) {
-            callback(pos);
+            callback(pos, true);
         }, function(){
             self.getIPLocation(function(pos){
-                callback(pos);
+                callback(pos, false);
             }, function(){
-                callback(self.getUserMarkerPosition());
+                callback(self.getUserMarkerPosition(), false);
             });
         });
     };

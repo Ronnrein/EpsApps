@@ -81,3 +81,11 @@ html, body {
     display: none;
     flex: 0 0 auto;
 }
+
+.ui-slider{
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    width: 100px !important;
+}
+

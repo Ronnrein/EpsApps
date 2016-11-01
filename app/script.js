@@ -16,8 +16,7 @@ function MobileApp() {
     var app = new SharedApp();
     var self = this;
     var newPosition = undefined;
-
-    $.mobile.changePage.defaults.changeHash = false;
+    var gpsOn = true;
 
     bindEvents();
     loadGpsPosition();
@@ -39,7 +38,9 @@ function MobileApp() {
     });
 
     function tick() {
-        updateUserPosition();
+        if(gpsOn) {
+            updateUserPosition();
+        }
     }
 
     function emergencyButtonClick() {
@@ -72,10 +73,22 @@ function MobileApp() {
         }
     }
 
+    function setCustomPosition() {
+        gpsPositionChanged(app.map.lastClickPosition);
+        updateUserPosition();
+        $("#gps-switch").val("off").slider("refresh");
+        gpsOn = false;
+        closeDialog();
+    }
+
     function loadGpsPosition() {
-        app.map.getUserLocation(function(pos){
+        app.map.getUserLocation(function(pos, isGps){
             app.map.setCenter(pos);
             gpsPositionChanged(pos);
+            if(!isGps){
+                $("#gps-switch").val("off").slider("refresh");
+                gpsOn = false;
+            }
         });
     }
 
@@ -86,14 +99,18 @@ function MobileApp() {
     }
 
     function closeDialog() {
-        $.mobile.changePage("#page");
+        $.mobile.changePage("#home-page");
+        $("#mappin-message").val("");
     }
 
     function addPinClick() {
         API.MapPins.addMapPin(app.map.lastClickPosition, $("#mappin-message").val(), app.session);
         app.map.applySessionMapPins(app.session);
         closeDialog();
-        $("#mappin-message").val("");
+    }
+
+    function gpsSwitchChange() {
+        gpsOn = $(this).val() == "on";
     }
 
     function bindEvents() {
@@ -101,8 +118,12 @@ function MobileApp() {
         $(self.emergencyButtonEl).click(emergencyButtonClick);
         $("#mappin-close-button").click(closeDialog);
         $("#mappin-add-button").click(addPinClick);
+        $("#set-position-button").click(setCustomPosition);
+        $("#gps-switch").change(gpsSwitchChange);
         navigator.geolocation.watchPosition(function(data) {
-            gpsPositionChanged(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
+            if(gpsOn){
+                gpsPositionChanged(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
+            }
         }, null, {
             enableHighAccuracy: true,
             maximumAge: self.geoMaximumAge,

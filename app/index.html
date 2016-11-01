@@ -12,7 +12,11 @@
     <body>
         <div data-role="page" id="home-page">
             <div data-role="header">
-                <h1>EPS</h1>
+                <select name="gps-switch" id="gps-switch" data-role="slider" data-mini="true">
+                    <option value="off">GPS Off</option>
+                    <option value="on" selected>GPS On</option>
+                </select>
+                <h1 id="header-text">EPS</h1>
             </div>
             <div data-role="content" id="content">
                 <div id="map"></div>
@@ -65,6 +69,12 @@
                     </div>
                     <div class="ui-block-b">
                         <a href="#" id="mappin-add-button" class="ui-link ui-btn ui-btn-b ui-shadow ui-corner-all" role="button">Add</a>
+                    </div>
+                </div>
+                <span style="margin:0 .2em"></span>
+                <div class="ui-grid-solo">
+                    <div class="ui-block-a">
+                        <a href="#" id="set-position-button" class="ui-link ui-btn ui-btn-b ui-shadow ui-corner-all" role="button">Set as your position</a>
                     </div>
                 </div>
             </div>

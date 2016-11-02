@@ -19,7 +19,23 @@
     padding:5px;
     clear: both;
     margin: 2px;
+    margin-top: 25px;
     box-shadow: 2px 2px 5px #888888;
+    position: relative;
+}
+
+.message-time{
+    position: absolute;
+    width: 200px;
+    right: 0px;
+    bottom: 32px;
+    text-align: right;
+    font-size: 10px
+}
+
+.message-client .message-time{
+    left: 0px;
+    text-align: left;
 }
 
 .message-client{

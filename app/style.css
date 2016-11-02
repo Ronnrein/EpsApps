@@ -75,11 +75,27 @@ html, body {
     resize: none;
 }
 
-#resize-handler{
-    height:20px;
-    background-color:blue;
+#resize-bar {
+    height:10px;
+    background-image:url("images/markerBar.png");
     display: none;
     flex: 0 0 auto;
+    position: relative;
+}
+
+#resize-bar div{
+    background-image:url("images/marker.png");
+    height:50px;
+    width:50px;
+    position: absolute;
+    left:50%;
+    margin-left: -25px;
+    top:-20px;
+    z-index: 2;
+}
+
+.resize-handler{
+    cursor: pointer;
 }
 
 .ui-slider{
@@ -87,5 +103,17 @@ html, body {
     top: 0px;
     right: 10px;
     width: 100px !important;
+}
+
+#logo{
+    height:32px;
+    margin: 5px;
+    background-image:url("images/logo.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.message-time{
+    bottom:25px
 }
 

@@ -8,7 +8,7 @@ function SharedApp() {
     this.sessionTitleEl = "#chat-header > h1";
     this.sessionAddressEl = "#chat-header > p";
     this.mapEl = "#map";
-    this.loopTime = 10000;
+    this.loopTime = 5000;
 
     this.session = undefined;
     this.operator = 0;
@@ -35,6 +35,27 @@ function SharedApp() {
             refreshAll();
             self.map.setUserMarkerPosition(pos);
         });
+    };
+
+    this.getFormattedTime = function(time) {
+        var monthNames = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"
+        ];
+        var timeSeconds = time.getTime()/1000;
+        var currentSeconds = (new Date().getTime()/1000)-self.timeDiff;
+        var seconds = Math.floor(currentSeconds - timeSeconds);
+        if(seconds < 3600) {
+            return seconds < 60 ? seconds+" seconds ago" : Math.floor(seconds/60)+" minutes ago";
+        }
+        if(seconds < 86400) {
+            return ("0"+time.getUTCHours()).slice(-2)+":"+("0"+time.getUTCMinutes()).slice(-2);
+        }
+        else{
+            return time.getUTCDate()+" "+monthNames[time.getUTCMonth()]+" "+time.getUTCFullYear();
+        }
     };
 
     function init() {
@@ -74,7 +95,12 @@ function SharedApp() {
                 $(self.chatContentEl).html("");
                 $.each(data, function(i, item) {
                     var c = item.OperatorID == 0 ? "message-client" : "message-operator";
-                    var html = "<div class='message "+c+"'>"+item.Message+"</div>";
+                    var formattedTime = self.getFormattedTime(new Date(item.UpdatedAt));
+                    var html = "" +
+                        "<div class='message "+c+"'>" +
+                            item.Message +
+                            "<p class='message-time'>"+formattedTime+"</p>" +
+                        "</div>";
                     var content = $(self.chatContentEl);
                     content.append(html);
                     if(!chatScrolled) {

@@ -5,6 +5,9 @@
         <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
         <link rel="stylesheet" type="text/css" href="../misc/styles.css" />
         <link rel="stylesheet" type="text/css" href="style.css" />
+        <link rel="icon" type="image/png" href="images/favicon32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="images/favicon16.png" sizes="16x16" />
+        <link rel="manifest" href="manifest.json">
         <meta charset="UTF-8">
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
         <title>Emergency Positioning System</title>
@@ -16,11 +19,13 @@
                     <option value="off">GPS Off</option>
                     <option value="on" selected>GPS On</option>
                 </select>
-                <h1 id="header-text">EPS</h1>
+                <div id="logo"></div>
             </div>
             <div data-role="content" id="content">
                 <div id="map"></div>
-                <div id="resize-handler"></div>
+                <div id="resize-bar" class="resize-handler">
+                    <div class="resize-handler"></div>
+                </div>
                 <div id="options">
                     <div id="front-page-content">
                         <div class="ui-grid-b">

@@ -22,15 +22,15 @@ function MobileApp() {
     loadGpsPosition();
 
     $("#map").resizable({
-        handleSelector: "#resize-handler",
+        handleSelector: ".resize-handler",
         resizeWidth: false,
-        onDrag: function(e, $el, newWidth, newHeight, opt) {
+        onDrag: function(e, $el, newWidth, newHeight) {
             var diff = $("#content").height() - newHeight;
-            if(diff < 150) {
-                newHeight = newHeight - (150 - diff);
+            if(diff < 100) {
+                newHeight = newHeight - (100 - diff);
             }
-            else if(newHeight < 150) {
-                newHeight = 150;
+            else if(newHeight < 100) {
+                newHeight = 100;
             }
             $el.height(newHeight);
             return false;
@@ -51,10 +51,11 @@ function MobileApp() {
             map.css("height", map.height()+"px");
             map.css("flex", "0 0 auto");
             $("#options").css("flex", "1 1 auto");
-            $("#resize-handler").show();
+            $("#resize-bar").show();
             $(self.homePageEl).fadeOut(function(){
                 $(self.chatEl).fadeIn(function(){
                     $(self.chatEl).css("display", "flex");
+                    $(app.mapEl).animate({height: "100px"});
                 });
             });
         });

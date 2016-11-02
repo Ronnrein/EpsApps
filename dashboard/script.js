@@ -66,7 +66,8 @@ function DashboardApp() {
         $(self.sessionEl).html("");
         $.each(sessions, function(i, item){
             var image = "../misc/icons/departments/"+item.DepartmentID+".png";
-            var sessionTime = new Date(item.UpdatedAt).getTime()/1000;
+            var lastUpdated = new Date(item.UpdatedAt);
+            var sessionTime = lastUpdated.getTime()/1000;
             var currentTime = (new Date().getTime()/1000)-app.timeDiff;
             var time = Math.floor(currentTime - sessionTime);
             var icon = "status-icon-offline";
@@ -76,11 +77,13 @@ function DashboardApp() {
             else if(time < self.statusTime.idle){
                 icon = "status-icon-idle";
             }
+            var formattedTime = app.getFormattedTime(lastUpdated);
             var html = "" +
                 "<div id='session"+item.ID+"'>" +
-                "<div class='icon "+icon+"'></div>" +
-                "<div class='icon' style='background-image:url("+image+");'></div>" +
-                "<p>Session "+item.ID+"</p>" +
+                    "<div class='icon session-icon "+icon+"'></div>" +
+                    "<div class='icon session-icon' style='background-image:url("+image+");'></div>" +
+                    "<p>Session "+item.ID+"</p>" +
+                    "<p class='session-time'>Last updated "+formattedTime+"</p>" +
                 "</div>";
             $(self.sessionEl).append(html);
         });
